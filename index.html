@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Machine Learning Repository — rushikreddie</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d12;
+    --ink2: #3a3a4a;
+    --ink3: #7a7a90;
+    --surface: #ffffff;
+    --surface2: #f7f7fb;
+    --surface3: #eeeef6;
+    --accent: #4f46e5;
+    --accent2: #7c3aed;
+    --teal: #0ea5e9;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --coral: #ef4444;
+    --border: rgba(0,0,0,0.08);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #f0f0fa;
+      --ink2: #a0a0be;
+      --ink3: #5a5a78;
+      --surface: #13131a;
+      --surface2: #1a1a24;
+      --surface3: #22222e;
+      --border: rgba(255,255,255,0.08);
+    }
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    background: var(--ink);
+    padding: 2rem;
+  }
+
+  #particle-canvas {
+    position: absolute;
+    inset: 0;
+    opacity: 0.55;
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 780px; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(79,70,229,0.18);
+    color: #a5b4fc;
+    border: 1px solid rgba(165,180,252,0.3);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    animation: fadeSlideDown 0.8s ease both;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #818cf8;
+    animation: pulse 2s infinite;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    animation: fadeSlideDown 0.9s 0.1s ease both;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, #818cf8 0%, #38bdf8 50%, #34d399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    margin-top: 1.25rem;
+    font-size: 1.15rem;
+    color: rgba(255,255,255,0.55);
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeSlideDown 1s 0.2s ease both;
+  }
+
+  .hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 2rem;
+    animation: fadeSlideDown 1.1s 0.3s ease both;
+  }
+
+  .chip {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.75);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all 0.25s;
+  }
+
+  .chip:hover {
+    background: rgba(255,255,255,0.13);
+    border-color: rgba(255,255,255,0.25);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  .hero-cta {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeSlideDown 1.2s 0.4s ease both;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.25s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(79,70,229,0.45);
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(79,70,229,0.55); }
+
+  .btn-outline {
+    background: transparent;
+    color: rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.35); color: #fff; }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.3);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: fadeSlideDown 1.5s 0.8s ease both;
+  }
+
+  .scroll-arrow {
+    width: 20px; height: 20px;
+    border-right: 1.5px solid rgba(255,255,255,0.3);
+    border-bottom: 1.5px solid rgba(255,255,255,0.3);
+    transform: rotate(45deg);
+    animation: bounce 2s infinite;
+  }
+
+  /* ── MAIN CONTENT ── */
+  main { max-width: 900px; margin: 0 auto; padding: 0 1.5rem 5rem; }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 5rem 0 0;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .section.visible { opacity: 1; transform: translateY(0); }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 1.05rem;
+    color: var(--ink2);
+    max-width: 620px;
+    line-height: 1.75;
+    margin-bottom: 2rem;
+  }
+
+  /* ── MODULE CARDS ── */
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .module-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .module-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .module-card:hover { transform: translateY(-4px); border-color: transparent; }
+  .module-card:hover::before { opacity: 1; }
+  .module-card:hover { box-shadow: 0 12px 36px rgba(0,0,0,0.1); }
+
+  .c1::before { background: linear-gradient(90deg, #4f46e5, #7c3aed); }
+  .c2::before { background: linear-gradient(90deg, #0ea5e9, #38bdf8); }
+  .c3::before { background: linear-gradient(90deg, #10b981, #34d399); }
+  .c4::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .c5::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+  .module-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .ic1 { background: rgba(79,70,229,0.12); color: #4f46e5; }
+  .ic2 { background: rgba(14,165,233,0.12); color: #0ea5e9; }
+  .ic3 { background: rgba(16,185,129,0.12); color: #10b981; }
+  .ic4 { background: rgba(245,158,11,0.12); color: #f59e0b; }
+  .ic5 { background: rgba(239,68,68,0.12); color: #ef4444; }
+
+  .module-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--ink3);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.25rem;
+  }
+
+  .module-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .module-desc {
+    font-size: 13.5px;
+    color: var(--ink2);
+    line-height: 1.65;
+    margin-bottom: 1rem;
+  }
+
+  .module-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    background: var(--surface3);
+    color: var(--ink2);
+    border: 1px solid var(--border);
+  }
+
+  /* ── CONCEPTS TABLE ── */
+  .concept-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 1.5rem;
+  }
+
+  .concept-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .concept-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--ink2);
+  }
+
+  .concept-table tr:last-child td { border-bottom: none; }
+
+  .concept-table tr:hover td { background: var(--surface2); }
+
+  .concept-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  /* ── ALGO PILLS ── */
+  .algo-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1.25rem;
+  }
+
+  .algo-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 13.5px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--ink);
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .algo-pill:hover { background: var(--accent); color: #fff; border-color: var(--accent); transform: scale(1.04); }
+
+  .algo-pill-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── SETUP STEPS ── */
+  .steps { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+
+  .step {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .step-body { padding-top: 4px; }
+
+  .step-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .step-desc { font-size: 13.5px; color: var(--ink2); margin-bottom: 6px; }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: #0d0d16;
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #c9d1d9;
+    overflow-x: auto;
+    line-height: 1.7;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .code-block .kw { color: #ff79c6; }
+  .code-block .str { color: #f1fa8c; }
+  .code-block .cm { color: #6272a4; }
+  .code-block .fn { color: #50fa7b; }
+  .code-block .var { color: #8be9fd; }
+
+  .copy-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: rgba(255,255,255,0.5);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+  /* ── STAT ROW ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--ink3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 48px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 100px;
+    margin: 1.5rem 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+    padding: 3rem 1.5rem;
+    font-size: 13px;
+  }
+
+  footer a { color: rgba(255,255,255,0.6); text-decoration: none; }
+  footer a:hover { color: #fff; }
+
+  footer .foot-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50% { transform: rotate(45deg) translateY(5px); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .stat-row { grid-template-columns: 1fr 1fr; }
+    .stat-row .stat-card:last-child { grid-column: 1/-1; }
+    .hero-cta { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <canvas id="particle-canvas"></canvas>
+  <div class="hero-content">
+    <div class="badge"><span class="badge-dot"></span> Jupyter Notebooks · Python</div>
+    <h1>Machine<br><span>Learning</span></h1>
+    <p class="hero-sub">A structured collection of notebooks covering supervised learning, ensemble methods, model evaluation, and feature engineering — built for hands-on practice.</p>
+    <div class="hero-chips">
+      <span class="chip">scikit-learn</span>
+      <span class="chip">pandas</span>
+      <span class="chip">numpy</span>
+      <span class="chip">matplotlib</span>
+      <span class="chip">seaborn</span>
+      <span class="chip">xgboost</span>
+    </div>
+    <div class="hero-cta">
+      <a href="https://github.com/rushikreddie/Machine-Learning" class="btn btn-primary">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        View on GitHub
+      </a>
+      <a href="#modules" class="btn btn-outline">Explore Modules ↓</a>
+    </div>
+  </div>
+  <div class="scroll-hint">scroll<div class="scroll-arrow"></div></div>
+</section>
+
+<!-- ══ MAIN ══ -->
+<main>
+
+  <!-- Stats -->
+  <section class="section" id="stats">
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Learning Modules</div></div>
+      <div class="stat-card"><div class="stat-num">100%</div><div class="stat-label">Jupyter Notebooks</div></div>
+      <div class="stat-card"><div class="stat-num">∞</div><div class="stat-label">Concepts Covered</div></div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="section" id="about">
+    <div class="section-label">Overview</div>
+    <h2 class="section-title">What's Inside</h2>
+    <div class="divider"></div>
+    <p class="section-desc">This repository is a hands-on study guide through the core pillars of classical machine learning. Each folder is a focused module — from fitting your first regression line to stacking ensembles and engineering powerful features. All notebooks are written to be readable, runnable, and reproducible.</p>
+    <p class="section-desc" style="margin-top: -0.5rem;">Every module follows a consistent pattern: concept introduction → mathematical intuition → scikit-learn implementation → evaluation → real-world notes.</p>
+  </section>
+
+  <!-- Modules -->
+  <section class="section" id="modules">
+    <div class="section-label">Repository Structure</div>
+    <h2 class="section-title">Five Core Modules</h2>
+    <div class="divider"></div>
+
+    <div class="modules-grid">
+
+      <div class="module-card c1">
+        <div class="module-icon ic1">📈</div>
+        <div class="module-number">MODULE 01 · REGRESSION</div>
+        <div class="module-name">Supervised Learning — Regression</div>
+        <div class="module-desc">Predict continuous outcomes. Covers linear and polynomial regression, gradient descent, cost functions, regularization (Ridge & Lasso), and performance metrics like RMSE and R².</div>
+        <div class="module-tags">
+          <span class="tag">LinearRegression</span>
+          <span class="tag">Ridge</span>
+          <span class="tag">Lasso</span>
+          <span class="tag">gradient-descent</span>
+        </div>
+      </div>
+
+      <div class="module-card c2">
+        <div class="module-icon ic2">🔵</div>
+        <div class="module-number">MODULE 02 · CLASSIFICATION</div>
+        <div class="module-name">Supervised Learning — Classification</div>
+        <div class="module-desc">Classify data into discrete labels. Explores logistic regression, KNN, SVM, Naive Bayes, and decision trees with confusion matrices, ROC-AUC, precision, and recall.</div>
+        <div class="module-tags">
+          <span class="tag">LogisticRegression</span>
+          <span class="tag">SVM</span>
+          <span class="tag">KNN</span>
+          <span class="tag">DecisionTree</span>
+        </div>
+      </div>
+
+      <div class="module-card c3">
+        <div class="module-icon ic3">🌲</div>
+        <div class="module-number">MODULE 03 · ENSEMBLE</div>
+        <div class="module-name">Ensemble Learning</div>
+        <div class="module-desc">Combine weak learners into powerful predictors. Covers bagging (Random Forest), boosting (AdaBoost, Gradient Boosting, XGBoost), and stacking strategies with voting classifiers.</div>
+        <div class="module-tags">
+          <span class="tag">RandomForest</span>
+          <span class="tag">XGBoost</span>
+          <span class="tag">GradientBoosting</span>
+          <span class="tag">AdaBoost</span>
+        </div>
+      </div>
+
+      <div class="module-card c4">
+        <div class="module-icon ic4">📊</div>
+        <div class="module-number">MODULE 04 · EVALUATION</div>
+        <div class="module-name">Model Evaluation</div>
+        <div class="module-desc">Know if your model actually works. Implements cross-validation, k-fold splitting, bias-variance tradeoff analysis, learning curves, GridSearchCV, and hyperparameter tuning pipelines.</div>
+        <div class="module-tags">
+          <span class="tag">cross_val_score</span>
+          <span class="tag">GridSearchCV</span>
+          <span class="tag">k-fold</span>
+          <span class="tag">bias-variance</span>
+        </div>
+      </div>
+
+      <div class="module-card c5">
+        <div class="module-icon ic5">⚙️</div>
+        <div class="module-number">MODULE 05 · FEATURES</div>
+        <div class="module-name">Feature Engineering</div>
+        <div class="module-desc">Turn raw data into model fuel. Explores encoding (one-hot, label, ordinal), imputation strategies, scaling (Standard, MinMax, Robust), feature selection, and pipelines for production-ready preprocessing.</div>
+        <div class="module-tags">
+          <span class="tag">OneHotEncoder</span>
+          <span class="tag">StandardScaler</span>
+          <span class="tag">Pipeline</span>
+          <span class="tag">SelectKBest</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Algorithms -->
+  <section class="section">
+    <div class="section-label">Algorithms Covered</div>
+    <h2 class="section-title">All the algorithms, one repo</h2>
+    <div class="divider"></div>
+    <p class="section-desc">Every major classical ML algorithm is implemented and compared in context.</p>
+    <div class="algo-grid">
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#4f46e5"></span>Linear Regression</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#4f46e5"></span>Polynomial Regression</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#4f46e5"></span>Ridge / Lasso</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#0ea5e9"></span>Logistic Regression</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#0ea5e9"></span>K-Nearest Neighbors</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#0ea5e9"></span>Support Vector Machine</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#0ea5e9"></span>Naive Bayes</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#0ea5e9"></span>Decision Tree</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>Random Forest</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>AdaBoost</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>Gradient Boosting</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>XGBoost</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>Stacking</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#f59e0b"></span>Cross-Validation</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#f59e0b"></span>GridSearchCV</span>
+    </div>
+  </section>
+
+  <!-- Concepts table -->
+  <section class="section">
+    <div class="section-label">Key Concepts</div>
+    <h2 class="section-title">What you'll learn</h2>
+    <div class="divider"></div>
+    <table class="concept-table">
+      <thead>
+        <tr>
+          <th>Concept</th>
+          <th>Description</th>
+          <th>Module</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Gradient Descent</td>
+          <td>Iterative optimization to minimize the cost function by updating weights in the direction of steepest descent.</td>
+          <td>01</td>
+        </tr>
+        <tr>
+          <td>Overfitting &amp; Regularization</td>
+          <td>Techniques like L1/L2 penalties that penalize model complexity to improve generalization on unseen data.</td>
+          <td>01 · 04</td>
+        </tr>
+        <tr>
+          <td>Decision Boundary</td>
+          <td>The hypersurface separating different class regions; visualized through 2D scatter plots in the notebooks.</td>
+          <td>02</td>
+        </tr>
+        <tr>
+          <td>Bagging vs Boosting</td>
+          <td>Bagging trains models in parallel on random subsets; boosting trains sequentially, correcting prior errors.</td>
+          <td>03</td>
+        </tr>
+        <tr>
+          <td>ROC-AUC</td>
+          <td>Area under the Receiver Operating Characteristic curve; measures classifier discrimination ability across thresholds.</td>
+          <td>02 · 04</td>
+        </tr>
+        <tr>
+          <td>Bias-Variance Tradeoff</td>
+          <td>The tension between underfitting (high bias) and overfitting (high variance), visualized via learning curves.</td>
+          <td>04</td>
+        </tr>
+        <tr>
+          <td>Feature Scaling</td>
+          <td>Normalizing or standardizing features so distance-based and gradient-based algorithms converge correctly.</td>
+          <td>05</td>
+        </tr>
+        <tr>
+          <td>Pipelines</td>
+          <td>Chaining preprocessing and modeling steps into a single sklearn object for clean, leak-free workflows.</td>
+          <td>05</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Setup -->
+  <section class="section">
+    <div class="section-label">Getting Started</div>
+    <h2 class="section-title">Run it locally in minutes</h2>
+    <div class="divider"></div>
+    <p class="section-desc">All notebooks run in a standard Python environment. Follow these steps to get up and running.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Clone the repository</div>
+          <div class="step-desc">Pull the repo to your local machine.</div>
+          <div class="code-block">
+            <button class="copy-btn" onclick="navigator.clipboard.writeText('git clone https://github.com/rushikreddie/Machine-Learning.git\ncd Machine-Learning')">copy</button>
+            <span class="kw">git</span> clone https://github.com/rushikreddie/Machine-Learning.git<br>
+            <span class="kw">cd</span> Machine-Learning
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Create a virtual environment</div>
+          <div class="step-desc">Isolate your dependencies cleanly.</div>
+          <div class="code-block">
+            <span class="kw">python</span> -m venv venv<br>
+            <span class="cm"># macOS/Linux</span><br>
+            <span class="kw">source</span> venv/bin/activate<br>
+            <span class="cm"># Windows</span><br>
+            venv\Scripts\<span class="fn">activate</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Install dependencies</div>
+          <div class="step-desc">Everything you need in one command.</div>
+          <div class="code-block">
+            <span class="kw">pip</span> install numpy pandas matplotlib seaborn scikit-learn xgboost jupyter
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Launch Jupyter</div>
+          <div class="step-desc">Open any notebook and start learning.</div>
+          <div class="code-block">
+            <span class="kw">jupyter</span> notebook
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prerequisites -->
+  <section class="section">
+    <div class="section-label">Prerequisites</div>
+    <h2 class="section-title">What you should know first</h2>
+    <div class="divider"></div>
+    <div class="algo-grid">
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>Python 3.8+</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>Basic NumPy &amp; Pandas</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>Linear Algebra basics</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>Calculus (partial derivatives)</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>Probability &amp; Statistics</span>
+      <span class="algo-pill"><span class="algo-pill-dot" style="background:#10b981"></span>Jupyter Notebook familiarity</span>
+    </div>
+  </section>
+
+  <!-- Learning path -->
+  <section class="section">
+    <div class="section-label">Recommended Path</div>
+    <h2 class="section-title">Follow the modules in order</h2>
+    <div class="divider"></div>
+    <p class="section-desc">Each module builds on the last. The suggested sequence maximizes conceptual progression and avoids prerequisite gaps.</p>
+    <div class="code-block" style="margin-top:1.25rem; font-size:13px; line-height:2.2">
+      <span class="cm"># 📖 Recommended learning sequence</span><br><br>
+      <span class="var">01</span> <span class="str">Supervised_Learning_Regression</span> → Master the fundamentals<br>
+      <span class="var">02</span> <span class="str">Supervised_Learning_Classification</span> → Extend to categorical outputs<br>
+      <span class="var">03</span> <span class="str">Ensemble_Learning</span> → Combine models for power<br>
+      <span class="var">04</span> <span class="str">model_Evaluation</span> → Validate and tune rigorously<br>
+      <span class="var">05</span> <span class="str">Feature_engineering</span> → Build production-ready pipelines
+    </div>
+  </section>
+
+  <!-- License / Contribute -->
+  <section class="section" style="padding-bottom: 3rem;">
+    <div class="section-label">Open Source</div>
+    <h2 class="section-title">Contribute &amp; Learn Together</h2>
+    <div class="divider"></div>
+    <p class="section-desc">This repository is open to contributions. Found a bug, want to add a new notebook, or improve an explanation? Pull requests are welcome.</p>
+    <div class="algo-grid" style="margin-top: 0.5rem;">
+      <a href="https://github.com/rushikreddie/Machine-Learning/fork" class="algo-pill" style="text-decoration:none; color: inherit;">
+        <span class="algo-pill-dot" style="background:#4f46e5"></span>Fork the repo
+      </a>
+      <a href="https://github.com/rushikreddie/Machine-Learning/issues/new" class="algo-pill" style="text-decoration:none; color: inherit;">
+        <span class="algo-pill-dot" style="background:#0ea5e9"></span>Open an issue
+      </a>
+      <a href="https://github.com/rushikreddie/Machine-Learning/pulls" class="algo-pill" style="text-decoration:none; color: inherit;">
+        <span class="algo-pill-dot" style="background:#10b981"></span>Submit a PR
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="foot-logo">rushikreddie / Machine-Learning</div>
+  <p style="margin:0.25rem 0 1rem">Built with 💜 and Jupyter Notebooks · Python · scikit-learn</p>
+  <p><a href="https://github.com/rushikreddie/Machine-Learning">github.com/rushikreddie/Machine-Learning</a></p>
+</footer>
+
+<script>
+/* ── PARTICLE CANVAS ── */
+(function() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles, animId;
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  function init() {
+    resize();
+    const count = Math.min(Math.floor((W * H) / 9000), 90);
+    particles = Array.from({ length: count }, () => ({
+      x: rand(0, W), y: rand(0, H),
+      vx: rand(-0.25, 0.25), vy: rand(-0.25, 0.25),
+      r: rand(1.5, 3.5),
+      color: ['#818cf8','#38bdf8','#34d399','#a78bfa'][Math.floor(rand(0,4))]
+    }));
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      for (let j = i + 1; j < particles.length; j++) {
+        const q = particles[j];
+        const dx = p.x - q.x, dy = p.y - q.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(129,140,248,${0.22 * (1 - dist / 120)})`;
+          ctx.lineWidth = 0.7;
+          ctx.stroke();
+        }
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.75;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+    }
+    animId = requestAnimationFrame(draw);
+  }
+
+  init(); draw();
+  window.addEventListener('resize', () => { cancelAnimationFrame(animId); init(); draw(); });
+})();
+
+/* ── SCROLL REVEAL ── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+/* ── ANIMATED COUNTERS ── */
+function animateNum(el, target, suffix) {
+  let start = 0;
+  const step = target / 40;
+  const tick = () => {
+    start = Math.min(start + step, target);
+    el.textContent = Math.floor(start) + (suffix || '');
+    if (start < target) requestAnimationFrame(tick);
+  };
+  tick();
+}
+
+const statObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const nums = e.target.querySelectorAll('.stat-num');
+      nums[0] && animateNum(nums[0], 5, '');
+      nums[1] && animateNum(nums[1], 100, '%');
+      statObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+const statSection = document.getElementById('stats');
+if (statSection) statObs.observe(statSection);
+</script>
+</body>
+</html>
